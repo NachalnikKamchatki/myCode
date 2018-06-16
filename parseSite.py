@@ -24,30 +24,41 @@ def parseFatalities(str = None):
         my_list = " ".join(my_tuple[0]).split(' ')
     except IndexError:
         pass
-
     return my_list
+def get_page(count_first=1, count_last=2):
 
-url = 'http://planecrashinfo.com/1920/1920.htm'
-list = []
-soup = getHTML(url)
-if soup == None:
-    print('Invalid Data')
-else:
-    table = soup.find('table')
-    rows = table.findAll('tr')
-    cells = []
-    for row in rows:
-        cells = row.findAll('td')
-        rlist = [cell.text for cell in cells]
-        common = rlist[:3] + parseFatalities(rlist[3])
-        list.append(common)
-    print(list)
+    # gets two parameters
+    #
+    # first param count_first
+    #
+    # second param count_last
+    #
+    # returns a pandas's data frame
+
+    list = []
+    for i in range(count_first, count_last + 1):
+        url = 'http://planecrashinfo.com/' + str(i) + '/' + str(i) + '.htm'
+        soup = getHTML(url)
+        if soup == None:
+            print('Invalid Data')
+        else:
+            table = soup.find('table')
+            rows = table.findAll('tr')
+            cells = []
+            for row in rows:
+                cells = row.findAll('td')
+                rlist = [cell.text for cell in cells]
+                common = rlist[:3] + parseFatalities(rlist[3])
+                list.append(common)
     labels = ['Date', 'Location / Operator', 'Aircraft Type / Registration', 'Fatalities', 'Cruew', 'Zero']
     df = pd.DataFrame(list[1:], columns = labels)
-    print(df)
+    return df
 
 
-print(parseFatalities('5/2(0)'))
+print(get_page(1920, 2018))
+
+
+
 
 
 
